@@ -3,6 +3,7 @@ import pandas as pd
 import datetime
 
 from polygon import RESTClient
+from security import safe_requests
 
 # Allows us to convert timestamps to datetime format
 def ts_to_datetime(ts) -> str:
@@ -25,7 +26,7 @@ def get_symbol_position(symbol,trade_type='paper'):
         paper_boolean = 'paper-'
     url = f"https://{paper_boolean}api.alpaca.markets/v2/positions/{symbol}"
 
-    response = requests.get(url, headers=API_key_dict[trade_type])
+    response = safe_requests.get(url, headers=API_key_dict[trade_type])
     print(response.json())
     return response
 
@@ -36,14 +37,14 @@ def get_account_status(trade_type='paper'):
         paper_boolean = 'paper-'
     url = f"https://{paper_boolean}api.alpaca.markets/v2/account"
 
-    response = requests.get(url,headers=API_key_dict[trade_type])
+    response = safe_requests.get(url,headers=API_key_dict[trade_type])
     print("Alpaca API Status code: " + str(response.status_code))
     # print(response.json())
     return response.json()
 
 def get_symbol_info(symbol):
     endpoint = 'https://api.alpaca.markets/v2/assets/'
-    response = requests.get(endpoint + symbol, headers=API_key_dict)
+    response = safe_requests.get(endpoint + symbol, headers=API_key_dict)
     print(response.json())
     return response
 
@@ -138,7 +139,7 @@ def EOD_historical_data(symbol, today, pastDate):
     api_token = ''
     url = f'https://eodhistoricaldata.com/api/eod/{symbol}.{exchange_id}' \
           f'?from={pastDate}&to={today}&api_token={api_token}'
-    response = requests.get(url)
+    response = safe_requests.get(url)
     # print(response.text)
     import pandas, io
     data = io.StringIO(response.text)
@@ -148,7 +149,7 @@ def EOD_historical_data(symbol, today, pastDate):
 def iex_api(symbol):
     from starter_files.secrets import IEX_CLOUD_API_TOKEN
     api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/quote?token={IEX_CLOUD_API_TOKEN}'
-    iex_data = requests.get(api_url).json()
+    iex_data = safe_requests.get(api_url).json()
     return iex_data
 # Function sourced from
 # https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks
