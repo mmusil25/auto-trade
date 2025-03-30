@@ -25,7 +25,7 @@ def get_symbol_position(symbol,trade_type='paper'):
         paper_boolean = 'paper-'
     url = f"https://{paper_boolean}api.alpaca.markets/v2/positions/{symbol}"
 
-    response = requests.get(url, headers=API_key_dict[trade_type])
+    response = requests.get(url, headers=API_key_dict[trade_type], timeout=60)
     print(response.json())
     return response
 
@@ -36,14 +36,14 @@ def get_account_status(trade_type='paper'):
         paper_boolean = 'paper-'
     url = f"https://{paper_boolean}api.alpaca.markets/v2/account"
 
-    response = requests.get(url,headers=API_key_dict[trade_type])
+    response = requests.get(url,headers=API_key_dict[trade_type], timeout=60)
     print("Alpaca API Status code: " + str(response.status_code))
     # print(response.json())
     return response.json()
 
 def get_symbol_info(symbol):
     endpoint = 'https://api.alpaca.markets/v2/assets/'
-    response = requests.get(endpoint + symbol, headers=API_key_dict)
+    response = requests.get(endpoint + symbol, headers=API_key_dict, timeout=60)
     print(response.json())
     return response
 
@@ -69,7 +69,7 @@ def place_trade(symbol, fraction_of_stock,trade_type='paper',direction='buy'):
         'Cookie': '__'
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload, timeout=60)
 
     print(response.text)
 
@@ -129,7 +129,7 @@ def yahoo_finance_approach():
         'x-rapidapi-host': ""
     }
 
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    response = requests.request("GET", url, headers=headers, params=querystring, timeout=60)
 
     print(response.text)
 
@@ -138,7 +138,7 @@ def EOD_historical_data(symbol, today, pastDate):
     api_token = ''
     url = f'https://eodhistoricaldata.com/api/eod/{symbol}.{exchange_id}' \
           f'?from={pastDate}&to={today}&api_token={api_token}'
-    response = requests.get(url)
+    response = requests.get(url, timeout=60)
     # print(response.text)
     import pandas, io
     data = io.StringIO(response.text)
@@ -148,7 +148,7 @@ def EOD_historical_data(symbol, today, pastDate):
 def iex_api(symbol):
     from starter_files.secrets import IEX_CLOUD_API_TOKEN
     api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/quote?token={IEX_CLOUD_API_TOKEN}'
-    iex_data = requests.get(api_url).json()
+    iex_data = requests.get(api_url, timeout=60).json()
     return iex_data
 # Function sourced from
 # https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks
